@@ -1,6 +1,7 @@
 import asyncio
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+import aiohttp
 
 def get_images_src_from_html(html_doc):       
     soup = BeautifulSoup(html_doc, "html.parser")    
@@ -25,7 +26,15 @@ def get_uri_from_images_src(base_uri, images_src):
         else:    
             yield parsed.geturl()
 
+async def main(uri):  
+     async with aiohttp.ClientSession() as session:  
+         async with session.get(uri) as response:  
+            if response.status != 200:  
+                return None  
+            if response.content_type.startswith("text/"):  
+                return await response.text()  
+            else:  
+                return await response.read() 
 
 
-
-
+asyncio.run(main("http://www.formation-python.com/"))
