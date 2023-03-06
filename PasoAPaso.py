@@ -1,21 +1,9 @@
 import asyncio
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-import requests
 
-url = "https://www.carrefour.es/?q=lavadora&scroll=VC4A-12690645"
-r = requests.get(url)
-html = r.content
+def get_images_src_from_html(html_doc):       
+    soup = BeautifulSoup(html_doc, "html.parser")    
+    return (img.get('src') for img in soup.find_all('img')) 
 
-soup = BeautifulSoup(html, "html.parser")
-
-fichaProductos = soup.find_all("div", class_="ebx-result-figure__img")
-i = 0
-for element in fichaProductos:
-    imagenProducto = element.find("img", class_="ebx-result-figure__img").get("src")
-    print(imagenProducto)
-    img = requests.get("https:"+imagenProducto)
-    i = i + 1
-    nombreImagen = "bosch"+ str(i)+".jpg"
-    print(nombreImagen)
 
